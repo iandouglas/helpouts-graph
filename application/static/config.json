@@ -13,54 +13,21 @@
       "item": "Session Start (PST)"
     }
   ],
-  "piecharts": [
+  "jumbopiecharts": [
     {
       "title": "Session Names",
       "item": "Offer Title"
-    },
+    }
+  ],
+  "bigpiecharts": [
     {
       "title": "Session State",
       "item": "Session State",
       "label": {
         "SUCCESSFUL": "Successful",
         "UNSUCCESSFUL": "Unsuccessful",
-        "CANCELED": "Canceled"
-      }
-    },
-    {
-      "title": "Instant or Scheduled",
-      "item": "Instant/Scheduled",
-      "label": {
-        "INSTANT": "Instant",
-        "SCHEDULED": "Scheduled"
-      }
-    },
-    {
-      "title": "Provider No-Show",
-      "item": "Provider No Show",
-      "label": {
-        "TRUE": "Did not Attend",
-        "FALSE": "Attended"
-      }
-    },
-    {
-      "title": "Customer No-Show",
-      "item": "Consumer No Show",
-      "label": {
-        "1": "true",
-        "0": "false"
-      }
-    },
-    {
-      "title": "Ratings",
-      "item": "Rating",
-      "label": {
-        "0": "No Rating",
-        "1": "1 star",
-        "2": "2 stars",
-        "3": "3 stars",
-        "4": "4 stars",
-        "5": "5 stars"
+        "CANCELLED": "Cancelled",
+        "SCHEDULED": "Future"
       }
     },
     {
@@ -87,6 +54,46 @@
         "DESKTOP:MOBILE_ANDROID": "Desktop and Android Device",
         "DESKTOP:MOBILE_IOS": "Desktop and iOS Device",
         "DESKTOP:UNKNOWN_DEVICE": "Desktop and Unknown Device"
+      }
+    }
+  ],
+  "mediumpiecharts": [
+    {
+      "title": "Ratings",
+      "item": "Rating",
+      "label": {
+        "0": "No Rating",
+        "1": "1 star",
+        "2": "2 stars",
+        "3": "3 stars",
+        "4": "4 stars",
+        "5": "5 stars"
+      }
+    }
+  ],
+  "smallpiecharts": [
+    {
+      "title": "Provider No-Show",
+      "item": "Provider No Show",
+      "label": {
+        "TRUE": "Did not Attend",
+        "FALSE": "Attended"
+      }
+    },
+    {
+      "title": "Customer No-Show",
+      "item": "Consumer No Show",
+      "label": {
+        "1": "true",
+        "0": "false"
+      }
+    },
+    {
+      "title": "Instant or Scheduled",
+      "item": "Instant/Scheduled",
+      "label": {
+        "INSTANT": "Instant",
+        "SCHEDULED": "Scheduled"
       }
     }
   ],

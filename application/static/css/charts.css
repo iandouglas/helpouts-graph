@@ -54,7 +54,7 @@ body {
 }
 
 #infodiv {
-  height:50px;
+  height: 50px;
 }
 
 #infobox {
@@ -75,20 +75,6 @@ body {
   margin: 0;
 }
 
-.legend {
-  line-height: 18px;
-  color: #555;
-  text-align: left;
-}
-
-.legend i {
-  float: left;
-  width: 18px;
-  height: 18px;
-  margin-right: 8px;
-  opacity: 0.7;
-}
-
 #calendarpanel {
   width: 100%;
 }
@@ -105,6 +91,7 @@ body {
 
 #wcpanel {
   height: 200px;
+  width: 500px;
 }
 
 #histpanel .chart rect.deselected {
@@ -126,18 +113,46 @@ body {
 #date-chart .title {
 }
 
-#piepanel {
-  background-color: #fff;
-  background-repeat: repeat-x;
+#jumbopiechart, #bigpiepanel, #mediumpiepanel, #smallpiepanel {
 }
 
-#piepanel .chart {
+#jumbopiepanel .chart {
   margin-top: 10px;
   margin-right: 10px;
   margin-left: 10px;
 }
 
-#piepanel .title {
+#jumbopiepanel .title {
+  z-index: 9;
+  margin-bottom: -5px;
+}
+#bigpiepanel .chart {
+  margin-top: 10px;
+  margin-right: 10px;
+  margin-left: 10px;
+}
+
+#bigpiepanel .title {
+  z-index: 9;
+  margin-bottom: -5px;
+}
+#mediumpiepanel .chart {
+  margin-top: 10px;
+  margin-right: 10px;
+  margin-left: 10px;
+}
+
+#mediumpiepanel .title {
+  z-index: 9;
+  margin-bottom: -5px;
+}
+#smallpiepanel .chart {
+  margin-top: 10px;
+  margin-right: 10px;
+  margin-left: 10px;
+}
+
+#smallpiepanel .title {
   z-index: 9;
   margin-bottom: -5px;
 }

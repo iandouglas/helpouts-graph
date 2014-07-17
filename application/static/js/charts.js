@@ -1,5 +1,4 @@
 var dashboard = dashboard || {};
-console.log("starting");
 var winW = 630, winH = 460;
 if (document.body && document.body.offsetWidth) {
  winW = document.body.offsetWidth;
@@ -15,7 +14,6 @@ if (window.innerWidth && window.innerHeight) {
  winW = window.innerWidth;
  winH = window.innerHeight;
 }
-console.log(winW);
 
 $(document)
   .ready(function () {
@@ -39,6 +37,7 @@ $(document)
         .fail(function (err) {
           console.log("error loading config.json");
           console.log(err)
+          // TODO: show the user that something happened
         })
     }
 
@@ -98,7 +97,6 @@ $(document)
       }
     }
   });
-console.log("doc ready loaded");
 
 function initcharts() {
   dashboard.renderlet = function () {
@@ -116,12 +114,10 @@ function initcharts() {
       } else {
         funstack.push(_.debounce(newfun, delay))
       }
-      console.log("registered a new renderlet!")
     }
 
     var init = _.once(function (renderlet) {
       renderlet(call);
-      console.log("renderlet initiated!")
     });
     return {
       init: init,
@@ -130,43 +126,44 @@ function initcharts() {
   }();
   dc.constants.EVENT_DELAY = 5;
   dashboard.charts = dashboard.charts || {};
-  console.log("date charts");
   $(dashboard.config.datecharts)
     .each(function (index, conf) {
       $("#calendarpanel").datechart(conf)
     });
-  console.log("hour charts");
   $(dashboard.config.hourcharts)
     .each(function (index, conf) {
       $("#calendarpanel").hourchart(conf)
     });
-  console.log("pie panel");
-  $("#piepanel")
-    .draggable({
-      containment: "body",
-      snap: "body",
-      snapMode: "inner"
-    })
-    .resizable();
-  console.log("pie charts");
-  $(dashboard.config.piecharts)
+  $(dashboard.config.smallpiecharts)
     .each(function (index, conf) {
-      $("#piepanel").piechart(conf)
+      $("#smallpiepanel").smallpiechart(conf)
     });
-  console.log("bar charts");
+  $(dashboard.config.mediumpiecharts)
+    .each(function (index, conf) {
+      $("#mediumpiepanel").mediumpiechart(conf)
+    });
+  $(dashboard.config.bigpiecharts)
+    .each(function (index, conf) {
+      $("#bigpiepanel").bigpiechart(conf)
+    });
+  $(dashboard.config.jumbopiecharts)
+    .each(function (index, conf) {
+      $("#jumbopiepanel").jumbopiechart(conf)
+    });
   $(dashboard.config.barcharts)
     .each(function (index, conf) {
       $("#histpanel").barchart(conf)
     });
-  console.log("word clouds");
   $(dashboard.config.wordclouds)
     .each(function (index, conf) {
       $("#wcpanel").wordcloud(conf)
     });
-  console.log("record counts");
   $("#infodiv").filtercount();
   $("#calendarpanel").show();
-  $("#piepanel").show();
+  $("#jumbopiepanel").show();
+  $("#bigpiepanel").show();
+  $("#mediumpiepanel").show();
+  $("#smallpiepanel").show();
   $("#histpanel").show();
   $("#wcpanel").show();
 }
@@ -190,14 +187,12 @@ oh.utils.delayexec = function () {
 
   function exec(call, delay) {
     if (timer) {
-      console.log("clear " + timer);
       clearTimeout(timer)
     }
     timer = setTimeout(function () {
       timer = null;
       call()
     }, delay);
-    console.log("added " + timer)
   }
 
   return exec
@@ -265,7 +260,7 @@ oh.utils.readconfig = function (next) {
       if (next) next()
     })
     .fail(function (err) {
-      alert("error loading config.json");
+      alert("error loading chart config, please alert Ian on Google+");
       console.log(err)
     })
 };
@@ -345,8 +340,7 @@ oh.keepactive = _.once(function (t) {
   })
 });
 (function ($) {
-  var colorschema = ["#8DD3C7", "#BEBADA", "#FB8072", "#80B1D3", "#FDB462", "#B3DE69", "#FCCDE5", "#CCEBC5", "#FFED6F"];
-  $.fn.piechart = function (options) {
+  $.fn.smallpiechart = function (options) {
     var target = this;
     var item = options.item;
     var title = options.title || "pie chart";
@@ -372,24 +366,164 @@ oh.keepactive = _.once(function (t) {
       });
     mydiv.appendTo(target);
     var mychart = dc.pieChart("#" + mydiv.attr("id"))
-      .width(180)
-      .height(180)
-      .radius(80)
-      .colors(colorschema)
-      .innerRadius(20)
+      .colors(d3.scale.category20())
+      .width(200)
+      .height(150)
+      .radius(50)
       .label(getlabel)
       .dimension(dashboard.dim[item])
-      .group(dashboard.groups[item]);
+      .group(dashboard.groups[item])
+      .data(function(group) { return group.all().filter(function(kv) { return kv.value > 0; }); })
+      .legend(dc.legend().x(10).y(10));
     dashboard.renderlet.init(mychart.renderlet);
     dashboard.piecharts = dashboard.piecharts || [];
     dashboard.piecharts.push(mychart);
     return target;
 
     function getlabel(d) {
-      return label[d.data.key] || d.data.key
+      return d.value
     }
   }
-})(jQuery);
+})(jQuery); // small pie chart
+(function ($) {
+  $.fn.mediumpiechart = function (options) {
+    var target = this;
+    var item = options.item;
+    var title = options.title || "pie chart";
+    var label = options.label || {};
+    var chartid = "pie-" + Math.random().toString(36).substring(7);
+    dashboard.dim[item] = dashboard.data.dimension(oh.utils.get(item));
+    dashboard.groups[item] = dashboard.dim[item].group();
+    var mydiv = $("<div/>").addClass("chart").attr("id", chartid);
+    var titlediv = $("<div/>").addClass("title").appendTo(mydiv);
+    $("<span/>").text(title).appendTo(titlediv);
+    titlediv.append("&nbsp;");
+    $("<a/>")
+      .addClass("reset")
+      .attr("href", "#")
+      .attr("style", "display:none;")
+      .text("(reset)")
+      .appendTo(titlediv)
+      .on("click", function (e) {
+        e.preventDefault();
+        mychart.filterAll();
+        dc.redrawAll();
+        return false
+      });
+    mydiv.appendTo(target);
+    var mychart = dc.pieChart("#" + mydiv.attr("id"))
+      .colors(d3.scale.category20())
+      .width(250)
+      .height(200)
+      .radius(80)
+      .label(getlabel)
+      .dimension(dashboard.dim[item])
+      .group(dashboard.groups[item])
+      .data(function(group) { return group.all().filter(function(kv) { return kv.value > 0; }); })
+      .legend(dc.legend().x(10).y(10));
+    dashboard.renderlet.init(mychart.renderlet);
+    dashboard.piecharts = dashboard.piecharts || [];
+    dashboard.piecharts.push(mychart);
+    return target;
+
+    function getlabel(d) {
+      return d.value
+    }
+  }
+})(jQuery); // medium pie chart
+(function ($) {
+  $.fn.bigpiechart = function (options) {
+    var target = this;
+    var item = options.item;
+    var title = options.title || "pie chart";
+    var label = options.label || {};
+    var chartid = "pie-" + Math.random().toString(36).substring(7);
+    dashboard.dim[item] = dashboard.data.dimension(oh.utils.get(item));
+    dashboard.groups[item] = dashboard.dim[item].group();
+    var mydiv = $("<div/>").addClass("chart").attr("id", chartid);
+    var titlediv = $("<div/>").addClass("title").appendTo(mydiv);
+    $("<span/>").text(title).appendTo(titlediv);
+    titlediv.append("&nbsp;");
+    $("<a/>")
+      .addClass("reset")
+      .attr("href", "#")
+      .attr("style", "display:none;")
+      .text("(reset)")
+      .appendTo(titlediv)
+      .on("click", function (e) {
+        e.preventDefault();
+        mychart.filterAll();
+        dc.redrawAll();
+        return false
+      });
+    mydiv.appendTo(target);
+    var mychart = dc.pieChart("#" + mydiv.attr("id"))
+      .colors(d3.scale.category20())
+      .width(450)
+      .height(300)
+      .radius(100)
+      .label(getlabel)
+      .dimension(dashboard.dim[item])
+      .group(dashboard.groups[item])
+      .data(function(group) { return group.all().filter(function(kv) { return kv.value > 0; }); })
+      .legend(dc.legend().x(10).y(10));
+    dashboard.renderlet.init(mychart.renderlet);
+    dashboard.piecharts = dashboard.piecharts || [];
+    dashboard.piecharts.push(mychart);
+    return target;
+
+    function getlabel(d) {
+      return d.value
+    }
+  }
+})(jQuery); // big pie chart
+(function ($) {
+  $.fn.jumbopiechart = function (options) {
+    var target = this;
+    var item = options.item;
+    var title = options.title || "pie chart";
+    var label = options.label || {};
+    var chartid = "pie-" + Math.random().toString(36).substring(7);
+    dashboard.dim[item] = dashboard.data.dimension(oh.utils.get(item));
+    dashboard.groups[item] = dashboard.dim[item].group();
+    var mydiv = $("<div/>").addClass("chart").attr("id", chartid);
+    var titlediv = $("<div/>").addClass("title").appendTo(mydiv);
+    $("<span/>").text(title).appendTo(titlediv);
+    titlediv.append("&nbsp;");
+    $("<a/>")
+      .addClass("reset")
+      .attr("href", "#")
+      .attr("style", "display:none;")
+      .text("(reset)")
+      .appendTo(titlediv)
+      .on("click", function (e) {
+        e.preventDefault();
+        mychart.filterAll();
+        dc.redrawAll();
+        return false
+      });
+    mydiv.appendTo(target);
+    var mychart = dc.pieChart("#" + mydiv.attr("id"))
+      .colors(d3.scale.category20())
+      .width(800)
+      .height(400)
+      .radius(175)
+      .label(getlabel)
+      .dimension(dashboard.dim[item])
+      .group(dashboard.groups[item])
+      .data(function(group) { return group.all().filter(function(kv) { return kv.value > 0; }); })
+      .legend(dc.legend().x(10).y(10))
+      .cx(400);
+    dashboard.renderlet.init(mychart.renderlet);
+    dashboard.piecharts = dashboard.piecharts || [];
+    dashboard.piecharts.push(mychart);
+    return target;
+
+    function getlabel(d) {
+      return d.value
+    }
+  }
+})(jQuery); // jumbo pie chart
 (function ($) {
   $.fn.barchart = function (options) {
     var target = this;
@@ -397,9 +531,7 @@ oh.keepactive = _.once(function (t) {
     var item = options.item;
     var title = options.title || item;
     var domain = options.domain || [];
-    var chartid = "bar-" + Math.random()
-      .toString(36)
-      .substring(7);
+    var chartid = "bar-" + Math.random().toString(36).substring(7);
     dashboard.dim[item] = dashboard.data.dimension(oh.utils.getnum(item));
     domain[0] = domain[0] || +dashboard.dim[item].bottom(1)[0][item];
     domain[1] = domain[1] || +dashboard.dim[item].top(1)[0][item];
@@ -413,16 +545,9 @@ oh.keepactive = _.once(function (t) {
     }
     var x_units = (domain[1] - domain[0]) / binwidth;
     dashboard.groups[item] = dashboard.dim[item].group(oh.utils.bin(binwidth));
-    var mydiv = $("<div/>")
-      .addClass("chart")
-      .addClass("histcontainer")
-      .attr("id", chartid);
-    var titlediv = $("<div/>")
-      .addClass("title")
-      .appendTo(mydiv);
-    $("<span/>")
-      .text(title)
-      .appendTo(titlediv);
+    var mydiv = $("<div/>").addClass("chart").addClass("histcontainer").attr("id", chartid);
+    var titlediv = $("<div/>").addClass("title").appendTo(mydiv);
+    $("<span/>").text(title).appendTo(titlediv);
     titlediv.append("&nbsp;");
     $("<a/>")
       .addClass("reset")
@@ -444,11 +569,6 @@ oh.keepactive = _.once(function (t) {
     });
     var plotwidth = rounddown(295 - 30 - 25, x_units);
     var remainder = 295 - 30 - 25 - plotwidth;
-    console.log("Domain:" + domain);
-    console.log("Binwidth:" + binwidth);
-    console.log("x_units:" + x_units);
-    console.log("plotwidth:" + plotwidth);
-    console.log("remainder:" + remainder);
     var mychart = dc.barChart("#" + mydiv.attr("id"))
       .width(295)
       .height(130)
@@ -511,7 +631,7 @@ oh.keepactive = _.once(function (t) {
       bin = bin * 10
     }
   }
-})(jQuery);
+})(jQuery); // bar chart
 (function ($) {
   $.fn.datechart = function (options) {
     var target = this;
@@ -580,7 +700,7 @@ oh.keepactive = _.once(function (t) {
     dashboard.renderlet.init(mychart.renderlet);
     return target
   }
-})(jQuery);
+})(jQuery); // date chart
 (function ($) {
   $.fn.hourchart = function (options) {
     var target = this;
@@ -632,10 +752,9 @@ oh.keepactive = _.once(function (t) {
     dashboard.renderlet.init(mychart.renderlet);
     return target
   }
-})(jQuery);
+})(jQuery); // hour chart
 (function ($) {
   $.fn.wordcloud = function (options) {
-    console.log("wc started");
     var target = this;
     var id = "#" + target.attr("id");
     var variable = options.item;
@@ -646,12 +765,13 @@ oh.keepactive = _.once(function (t) {
     var wcdelay = oh.utils.delayexec();
     var chartid = "wc-" + Math.random().toString(36).substring(7);
     var resizable = options.resizable || false;
-    var maxwords = options.maxwords || 50;
+    var maxwords = options.maxwords || 100;
     var mydim = dashboard.dim[variable] = dashboard.data.dimension(oh.utils.get(variable));
     var mydiv = $("<div/>").addClass("wccontainer").addClass("well").css("height", height).appendTo(target);
     var titlediv = $("<div/>").addClass("title").appendTo(mydiv);
     titlediv.append("&nbsp;");
     $("<span/>").text(title).appendTo(titlediv);
+
     $("<a/>")
       .addClass("refresh")
       .addClass("hide")
@@ -661,6 +781,7 @@ oh.keepactive = _.once(function (t) {
         chartdiv.empty();
         _.delay(update, 300)
       });
+
     var filterinput = $("<input />")
       .attr("type", "text")
       .attr("placeholder", "filter")
@@ -669,6 +790,7 @@ oh.keepactive = _.once(function (t) {
         filter(this.value);
         dc.redrawAll()
       });
+
     $("<a/>")
       .addClass("reset")
       .addClass("hide")
@@ -676,6 +798,7 @@ oh.keepactive = _.once(function (t) {
       .on("click", function () {
         setvalue()
       });
+
     var chartdiv = $("<div/>")
       .addClass("chart")
       .attr("id", chartid)
@@ -695,8 +818,6 @@ oh.keepactive = _.once(function (t) {
     }
 
     function build(words) {
-      console.log('build');
-      console.log(words);
       var fill = d3.scale.category20();
       var minval = words.slice(-1)[0]["size"];
       var maxval = words[0]["size"];
@@ -773,12 +894,9 @@ oh.keepactive = _.once(function (t) {
         }
       });
       build(words);
-      var enddtime = (new Date)
-        .getTime();
+      var enddtime = (new Date).getTime();
       var delta = enddtime - starttime;
-      console.log("updating wordcloud took: " + delta + "ms.");
-      $(chartdiv)
-        .fadeIn(500)
+      $(chartdiv).fadeIn(500)
     }
 
     dashboard.renderlet.register(function () {
@@ -808,7 +926,7 @@ oh.keepactive = _.once(function (t) {
     return chartdiv
   };
   wordmap = function () {
-    var stopWords = /^(not_displayed|it|the|is|are|was|has|had|do|does|did|a|on|what|in|his|her|for|and|of|I'm|I|that|me|to|as|He|She|him|her)$/;
+    var stopWords = /^(not_displayed|it|the|is|are|was|has|had|do|does|did|a|on|what|in|his|her|for|and|of|I'm|I|that|me|to|as|He|She|him|her|how|my|this|who|when)$/i;
     var punctuation = /[!"&()*+,-\.\/:;<=>?\[\\\]^`\{|\}~]+/g;
     var wordSeparators = /[\s\u3031-\u3035\u309b\u309c\u30a0\u30fc\uff70]+/g;
     var discard = /^(@|https?:)/;
@@ -845,7 +963,7 @@ oh.keepactive = _.once(function (t) {
       return tags.slice(0, maxwords)
     }
   }()
-})(jQuery);
+})(jQuery); // tag cloud
 (function ($) {
   $.fn.filtercount = function (options) {
     var titlediv = $("<div/>")
@@ -880,4 +998,4 @@ oh.keepactive = _.once(function (t) {
       .group(dashboard.groups.all);
     return this
   }
-})(jQuery);
+})(jQuery); // filter counts

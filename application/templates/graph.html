@@ -1,5 +1,24 @@
 <!DOCTYPE html>
 <html>
+  <head>
+    <title>Your Helpouts Graph</title>
+    <script src='//code.jquery.com/jquery-1.11.1.min.js'></script>
+    <script src='//code.jquery.com/ui/1.11.0/jquery-ui.min.js'></script>
+    <script src='/st/js/underscore-min.js'></script>
+    <script src='/st/js/mustache.js'></script>
+    <script src='/st/js/murmurhash3_gc.js'></script>
+    <script src='//d3js.org/d3.v3.min.js'></script>
+    <script src='//dc-js.github.io/dc.js/js/dc.js'></script>
+    <link href='//cdnjs.cloudflare.com/ajax/libs/dc/1.7.0/dc.css' rel='stylesheet' type='text/css'>
+    <script src='//cdnjs.cloudflare.com/ajax/libs/crossfilter/1.3.7/crossfilter.min.js'></script>
+    <script src='/st/js/d3.layout.cloud.js'></script>
+    {% if not error %}
+    {% if csv_len > 1 %}
+    <script src='/st/js/charts.js'></script>
+    {% endif %}
+    {% endif %}
+    <link href='/st/css/charts.css' rel='stylesheet' type='text/css'>
+  </head>
   <body>
     <p>
       Your provider report will be cached in memory for about ten minutes. Every time you refresh
@@ -42,29 +61,17 @@
     <div style='clear:both'></div>
     <div class='chartpanel' id='histpanel'></div>
     <div style='clear:both'></div>
-    <div class='well chartpanel' id='piepanel'></div>
+    <div class='well chartpanel' id='jumbopiepanel'></div>
+    <div style='clear:both'></div>
+    <div class='well chartpanel' id='bigpiepanel'></div>
+    <div style='clear:both'></div>
+    <div class='well chartpanel' id='mediumpiepanel'></div>
+    <div style='clear:both'></div>
+    <div class='well chartpanel' id='smallpiepanel'></div>
     <div style='clear:both'></div>
     <div class='chartpanel' id='wcpanel'></div>
     <div style='clear:both'></div>
     <textarea id='raw_csv_data' style='display:none'>{{raw_csv_data|safe}}</textarea>
     {% endif %}
   </body>
-  <head>
-    <script src='//code.jquery.com/jquery-1.11.1.min.js'></script>
-    <script src='//code.jquery.com/ui/1.11.0/jquery-ui.min.js'></script>
-    <script src='/st/js/underscore-min.js'></script>
-    <script src='/st/js/mustache.js'></script>
-    <script src='/st/js/murmurhash3_gc.js'></script>
-    <script src='//cdnjs.cloudflare.com/ajax/libs/d3/3.4.10/d3.min.js'></script>
-    <script src='//cdnjs.cloudflare.com/ajax/libs/dc/1.7.0/dc.min.js'></script>
-    <link href='//cdnjs.cloudflare.com/ajax/libs/dc/1.7.0/dc.css' rel='stylesheet' type='text/css'>
-    <script src='/st/js/crossfilter.js'></script>
-    <script src='/st/js/d3.layout.cloud.js'></script>
-    {% if not error %}
-    {% if csv_len > 1 %}
-    <script src='/st/js/charts.js'></script>
-    {% endif %}
-    {% endif %}
-    <link href='/st/css/charts.css' rel='stylesheet' type='text/css'>
-  </head>
 </html>
