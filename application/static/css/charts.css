@@ -1,0 +1,161 @@
+#responsemodal {
+  top: 30px;
+  padding-bottom: 0;
+}
+
+#data-count {
+  z-index: 1;
+  color: navy;
+}
+
+.table {
+  padding-bottom: 0 xp;
+  margin-bottom: 0;
+}
+
+body {
+  padding: 0;
+  margin: 0;
+}
+
+.overlaypanel {
+  overflow: hidden;
+}
+
+.wccontainer {
+  height: 240px;
+}
+
+.wccontainer input {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}
+
+.wccontainer .title {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+}
+
+.histcontainer {
+  margin: 5px 0 0px 0px;
+  background-color: #FFFFFF;
+  border: 1px solid #e3e3e3;
+  border-radius: 4px;
+}
+
+.title {
+  font-weight: bold;
+}
+
+.title a {
+  color: #fb8072;
+}
+
+#infodiv {
+  height:50px;
+}
+
+#infobox {
+  text-align: center;
+}
+
+#infobox div {
+  padding: 3px;
+}
+
+#infobox h4 {
+  margin: 0 0 5px;
+  color: #777;
+}
+
+#infobox pre {
+  height: 46px;
+  margin: 0;
+}
+
+.legend {
+  line-height: 18px;
+  color: #555;
+  text-align: left;
+}
+
+.legend i {
+  float: left;
+  width: 18px;
+  height: 18px;
+  margin-right: 8px;
+  opacity: 0.7;
+}
+
+#calendarpanel {
+  width: 100%;
+}
+
+#histpanel {
+  width: 50%;
+}
+
+.chartpanel {
+  z-index: 1;
+  padding: 0;
+  margin: 0;
+}
+
+#wcpanel {
+  height: 200px;
+}
+
+#histpanel .chart rect.deselected {
+  stroke: none;
+  fill: #ccc;
+}
+
+#histpanel .chart rect.bar {
+  stroke: none;
+  fill: #B97DCF;
+}
+
+#hour-chart .title {
+}
+
+#histpanel .chart .title {
+}
+
+#date-chart .title {
+}
+
+#piepanel {
+  background-color: #fff;
+  background-repeat: repeat-x;
+}
+
+#piepanel .chart {
+  margin-top: 10px;
+  margin-right: 10px;
+  margin-left: 10px;
+}
+
+#piepanel .title {
+  z-index: 9;
+  margin-bottom: -5px;
+}
+
+.hoverinfo {
+  position: fixed;
+  left: 400px;
+  width: 150px;
+  padding: 6px 8px;
+  font: 14px/16px Arial, Helvetica, sans-serif;
+  text-align: center;
+  background: white;
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 5px;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+}
+
+.hoverinfo h4 {
+  margin: 0 0 5px;
+  color: #777;
+}

@@ -43,6 +43,9 @@ def create_routes(app):
         app.add_url_rule('/graph', endpoint='tos',
                          view_func=graph,
                          methods=['GET', 'POST'])
+        app.add_url_rule('/graph/<string:state>', endpoint='tos',
+                         view_func=graph,
+                         methods=['GET', 'POST'])
 
         # app.add_url_rule('/tos', endpoint='tos',
         #                  view_func=general.terms_of_service,

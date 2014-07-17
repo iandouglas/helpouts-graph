@@ -28,9 +28,9 @@ handlers:
 
 - url: /st
   static_dir: application/static
-- url: /css
+- url: /st/css
   static_dir: application/static/css
-- url: /js
+- url: /st/js
   static_dir: application/static/js
 
 # Main script

@@ -1,0 +1,119 @@
+,
+  "barcharts": [
+    {
+      "title": "Healthy",
+      "item": "HealthyLevel"
+    }
+  ]
+
+
+
+
+    string_reader = csv.reader(StringIO.StringIO(request.files['csv_upload'].read()))
+    raw_csv_data_reader = string_reader
+    for row in raw_csv_data_reader:
+        raw_csv_data += "\n".join(','.join('"%s"' % column for column in row))
+
+
+
+
+
+    payload = []
+
+    successful_sessions = []
+    unsuccessful_sessions = []
+    cancelled_sessions = []
+    state_other_sessions = []
+
+    paid_sessions = []
+    free_sessions = []
+    total_earnings = 0
+    avg_earnings = 0
+
+    successful_session_names = {}
+    unsuccessful_session_names = {}
+    cancelled_session_names = {}
+    other_session_names = {}
+
+    minutes_spent = {}
+
+    skip_header_row = True
+    for row in string_reader:
+        if skip_header_row or row[PAST_FUTURE] == 'FUTURE':
+            skip_header_row = False
+            continue
+
+        helpout_name = unicode(row[HELPOUT_NAME])
+        if helpout_name not in successful_session_names:
+            successful_session_names[helpout_name] = 0
+        if helpout_name not in unsuccessful_session_names:
+            unsuccessful_session_names[helpout_name] = 0
+        if helpout_name not in cancelled_session_names:
+            cancelled_session_names[helpout_name] = 0
+        if helpout_name not in other_session_names:
+            other_session_names[helpout_name] = 0
+        if helpout_name not in minutes_spent:
+            minutes_spent[helpout_name] = {
+                'session_lengths': [],
+                'total_duration': 0,
+                'avg_duration': 0,
+                'total_sessions': 0,
+            }
+
+        if row[SESSION_STATE] == 'SUCCESSFUL':
+            successful_sessions.append(row)
+
+            successful_session_names[helpout_name] += 1
+
+            exp_dur = int(row[EXPECTED_DURATION])
+            suc_sessions = successful_session_names[helpout_name]
+
+            minutes_spent[helpout_name]['session_lengths'].append(int(row[EXPECTED_DURATION]))
+            minutes_spent[helpout_name]['total_duration'] += int(row[ACTUAL_DURATION])
+            minutes_spent[helpout_name]['total_sessions'] = successful_session_names[helpout_name]
+            minutes_spent[helpout_name]['avg_duration'] = \
+                float(minutes_spent[helpout_name]['total_duration'] / successful_session_names[helpout_name])
+            minutes_spent[helpout_name]['session_length_avg'] = \
+                sum(minutes_spent[helpout_name]['session_lengths']) / suc_sessions
+
+            if row[EARNINGS] == '0.0':
+                free_sessions.append(row)
+            elif row[EARNINGS]:
+                paid_sessions.append(row)
+                total_earnings += float(row[EARNINGS])
+                avg_earnings = float(total_earnings / len(paid_sessions))
+
+        elif row[SESSION_STATE] == 'UNSUCCESSFUL':
+            unsuccessful_sessions.append(row)
+            unsuccessful_session_names[helpout_name] += 1
+
+        elif row[SESSION_STATE] == 'CANCELLED':
+            cancelled_sessions.append(row)
+            cancelled_session_names[helpout_name] += 1
+
+        elif row[SESSION_STATE]:
+            state_other_sessions.append(row)
+            other_session_names[helpout_name] += 1
+
+        payload.append(row)
+    logging.error(raw_csv_data)
+
+
+,
+        json2={
+            'session_count': len(payload),
+            #'data': payload,
+            'total_earnings': total_earnings,
+            'avg_earnings': avg_earnings,
+            'paid_sessions': len(paid_sessions),
+            'free_sessions': len(free_sessions),
+            'successful_sessions': successful_session_names,
+            'successful_sessions_count': len(successful_sessions),
+            'unsuccessful_sessions': unsuccessful_session_names,
+            'unsuccessful_sessions_count': len(unsuccessful_sessions),
+            'cancelled_sessions': cancelled_session_names,
+            'cancelled_sessions_count': len(cancelled_sessions),
+            'other_sessions': other_session_names,
+            'other_sessions_count': len(state_other_sessions),
+            'minutes_spent': minutes_spent,
+        }

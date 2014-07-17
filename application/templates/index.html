@@ -1,17 +1,21 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <script src="lib/dc/d3.min.js"></script>
-    <script src="lib/dc/crossfilter.min.js"></script>
-    <script src="lib/dc/dc.min.js"> </script>
-    <link rel="stylesheet" href="lib/dc/dc.css">
-    <script src="lib/d3-cloud/d3.layout.cloud.min.js"></script>
-  </head>
+  <head></head>
   <body>
-    <form action='/graph' enctype='multipart/form-data' method='post'>
-      <label for='csv_upload'>Upload your Helpouts file here:</label>
-      <input id='csv_upload' name='csv_upload' type='file'>
-      <input type='submit' value='upload'>
-    </form>
+    <p>
+      Step 1: Download your
+      <a href='http://helpouts.google.com/api/providerreport'>Provider Report</a>
+      in CSV format. You will need to be logged in on the same Google account
+      that you use for providing Helpouts sessions.
+    </p>
+    <p>
+      Step 2: Upload your provider report here. Click on 'Choose file' and select
+      your provider report (check your Downloads folder), then click the 'upload'
+      button:
+      <form action='/graph' enctype='multipart/form-data' method='post'>
+        <input id='csv_upload' name='csv_upload' type='file'>
+        <input type='submit' value='upload'>
+      </form>
+    </p>
   </body>
 </html>
