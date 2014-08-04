@@ -1,0 +1,78 @@
+<link href='/st/bower_components/polymer/polymer.html' rel='import'>
+<link href='/st/bower_components/font-roboto/roboto.html' rel='import'>
+<link href='/st/bower_components/core-drawer-panel/core-drawer-panel.html' rel='import'>
+<link href='/st/bower_components/core-header-panel/core-header-panel.html' rel='import'>
+<link href='/st/bower_components/core-toolbar/core-toolbar.html' rel='import'>
+<link href='/st/bower_components/core-icons/core-icons.html' rel='import'>
+<link href='/st/bower_components/paper-icon-button/paper-icon-button.html' rel='import'>
+<link href='/st/bower_components/paper-input/paper-input.html' rel='import'>
+<link href='/st/bower_components/core-localstorage/core-localstorage.html' rel='import'>
+<link href='/st/bower_components/core-item/core-item.html' rel='import'>
+<link href='/st/bower_components/paper-toggle-button/paper-toggle-button.html' rel='import'>
+<link href='/st/bower_components/paper-icon-button/paper-icon-button.html' rel='import'>
+<link href='/st/bower_components/paper-slider/paper-slider.html' rel='import'>
+<link href='/st/bower_components/paper-toast/paper-toast.html' rel='import'>
+<link href='/st/bower_components/paper-shadow/paper-shadow.html' rel='import'>
+<link href='/st/bower_components/paper-ripple/paper-ripple.html' rel='import'>
+<polymer-element name='helpouts-graph-upload'>
+  <template>
+    <link href='/st/css/styles.css' rel='stylesheet'>
+    <core-drawer-panel id='drawerPanel' narrow='{{narrow}}' responsiveWidth='600px'>
+      <core-header-panel drawer mode='waterfall'>
+        <core-toolbar class='tokenList'>
+          Menu (eventually)
+        </core-toolbar>
+        <p>
+          Nothing to see here yet.
+        </p>
+        <core-item>
+          <paper-button class='colored' label='reset' on-click='{{reset}}' raisedButton></paper-button>
+        </core-item>
+        <paper-toast class='capsule' duration='800' id='toast' text='Settings are reset!'></paper-toast>
+      </core-header-panel>
+      <core-header-panel main mode='waterfall'>
+        <core-toolbar class='tokenList'>
+          <paper-icon-button icon='menu' on-click='{{toggleDrawer}}'></paper-icon-button>
+          <span flex>HELPOUTS GRAPHS</span>
+        </core-toolbar>
+        <div class='content' data-fade-selected='{{fadeSelected}}'>
+          <paper-input floatingLabel id='newNoteInput' label='Add a new note' on-change='{{add}}' value='{{newNote}}'></paper-input>
+          <p>
+            Step 1: Download your
+            <a href='http://helpouts.google.com/api/providerreport'>Provider Report</a>
+            in CSV format. You will need to be logged in on the same Google account
+            that you use for providing Helpouts sessions.
+          </p>
+          <p>
+            Step 2: Upload your provider report here. Click on 'Choose file' and select
+            your provider report (check your Downloads folder), then click the 'upload'
+            button:
+            <form action='/graph' enctype='multipart/form-data' method='post'>
+              <input id='csv_upload' name='csv_upload' type='file'>
+              <input type='submit' value='upload'>
+            </form>
+          </p>
+        </div>
+      </core-header-panel>
+    </core-drawer-panel>
+    <core-localstorage id='storage' name='helpouts-graph-storage' value='{{data}}'></core-localstorage>
+  </template>
+  <script>
+    Polymer('helpouts-graph-upload', {
+      data: [],
+      toggleDrawer: function() {
+        this.$.drawerPanel.togglePanel();
+      },
+      ready: function() {
+        this.$.newNoteInput.style.display = 'none';
+        console.log('here');
+      },
+      dataChanged: function() {
+        this.$.storage.save();
+      },
+      reset: function() {
+        this.$.toast.show();
+      }
+    });
+  </script>
+</polymer-element>

@@ -1,21 +1,16 @@
 <!DOCTYPE html>
 <html>
-  <head></head>
-  <body>
-    <p>
-      Step 1: Download your
-      <a href='http://helpouts.google.com/api/providerreport'>Provider Report</a>
-      in CSV format. You will need to be logged in on the same Google account
-      that you use for providing Helpouts sessions.
-    </p>
-    <p>
-      Step 2: Upload your provider report here. Click on 'Choose file' and select
-      your provider report (check your Downloads folder), then click the 'upload'
-      button:
-      <form action='/graph' enctype='multipart/form-data' method='post'>
-        <input id='csv_upload' name='csv_upload' type='file'>
-        <input type='submit' value='upload'>
-      </form>
-    </p>
+  <head>
+    <title>Helpouts Graph - Visualize your Provider data</title>
+    <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0' name='viewport'>
+    <meta content='yes' name='mobile-web-app-capable'>
+    <meta content='yes' name='apple-mobile-web-app-capable'>
+    <link href='/st/css/styles.css' rel='stylesheet'>
+    <script src='/st/bower_components/platform/platform.js'></script>
+    <link href='/st/bower_components/core-header-panel/core-header-panel.html' rel='import'>
+    <link href='/st/helpouts-graph-upload.html' rel='import'>
+  </head>
+  <body unresolved>
+    <helpouts-graph-upload></helpouts-graph-upload>
   </body>
 </html>

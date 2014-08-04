@@ -1,0 +1,303 @@
+%link(rel="import" href="/st/bower_components/polymer/polymer.html")
+%link(rel="import" href="/st/bower_components/font-roboto/roboto.html")
+%link(rel="import" href="/st/bower_components/core-drawer-panel/core-drawer-panel.html")
+%link(rel="import" href="/st/bower_components/core-header-panel/core-header-panel.html")
+%link(rel="import" href="/st/bower_components/core-toolbar/core-toolbar.html")
+%link(rel="import" href="/st/bower_components/core-icons/core-icons.html")
+%link(rel="import" href="/st/bower_components/paper-icon-button/paper-icon-button.html")
+%link(rel="import" href="/st/bower_components/paper-fab/paper-fab.html")
+%link(rel="import" href="/st/bower_components/paper-input/paper-input.html")
+%link(rel="import" href="/st/bower_components/paper-checkbox/paper-checkbox.html")
+%link(rel="import" href="/st/bower_components/core-localstorage/core-localstorage.html")
+%link(rel="import" href="/st/bower_components/core-item/core-item.html")
+%link(rel="import" href="/st/bower_components/paper-toggle-button/paper-toggle-button.html")
+%link(rel="import" href="/st/bower_components/paper-icon-button/paper-icon-button.html")
+%link(rel="import" href="/st/bower_components/paper-slider/paper-slider.html")
+%link(rel="import" href="/st/bower_components/paper-toast/paper-toast.html")
+%link(rel="import" href="/st/bower_components/paper-shadow/paper-shadow.html")
+%link(rel="import" href="/st/bower_components/paper-ripple/paper-ripple.html")
+
+%script(src='//code.jquery.com/jquery-1.11.1.min.js')
+%script(src='//code.jquery.com/ui/1.11.0/jquery-ui.min.js')
+%script(src='/st/js/underscore-min.js')
+%script(src='/st/js/mustache.js')
+%script(src='/st/js/murmurhash3_gc.js')
+
+%script(src='//d3js.org/d3.v3.min.js')
+%script(src='//dc-js.github.io/dc.js/js/dc.js')
+%link(rel='stylesheet' type='text/css' href='//cdnjs.cloudflare.com/ajax/libs/dc/1.7.0/dc.css')
+%script(src='//cdnjs.cloudflare.com/ajax/libs/crossfilter/1.3.7/crossfilter.min.js')
+%script(src='/st/js/d3.layout.cloud.js')
+
+%link(rel='stylesheet' type='text/css' href='/st/css/charts.css')
+
+%polymer-element(name="helpouts-graph")
+  %template
+    %link(rel="stylesheet" href="/st/css/styles.css")
+    %core-drawer-panel#drawerPanel(responsiveWidth="600px" narrow="{{narrow}}")
+      %core-header-panel(drawer mode="waterfall")
+        %core-toolbar.tokenList
+          Menu
+        %ul
+          %li
+            %a(href='/') Upload again
+
+          %li
+            Graph Choices:
+            %ul
+              %li
+                %a(href='/graph') All sessions
+              %li
+                %a(href='/graph/SUCCESSFUL') Successful sessions
+              %li
+                %a(href='/graph/UNSUCCESSFUL') Unsuccessful sessions
+              %li
+                %a(href='/graph/CANCELLED') Cancelled sessions
+              %li
+                %a(href='/graph/FUTURE') Upcoming sessions
+          %li
+            Your provider report will be cached in memory for about ten minutes. Every time you refresh
+            this page, it will renew the cache for an additional ten minutes.
+          %li
+            %strong Your report is not stored in any permanent form!
+          %li
+            If you see an error saying 'your session may have ended' then you will need to upload
+            your provider report again. I don't apologize for this inconvenience, I have no need or
+            interest to store your data for anything.
+          %li
+            Contact Ian:
+            %a(href="//plus.google.com/+IanDouglas") Google+
+        %core-item
+          %paper-button(raisedButton class="colored" label="reset" on-click="{{reset}}")
+        %paper-toast(id="toast" class="capsule" text="Settings are reset!" duration="800")
+
+      %core-header-panel(main mode="waterfall")
+        %core-toolbar.tokenList
+          %paper-icon-button(icon="menu" on-click="{{toggleDrawer}}")
+          %span(flex)HELPOUTS GRAPHS
+
+        .content(data-fade-selected="{{fadeSelected}}")
+          #infobox#infodiv
+
+          %div(style='clear:both')
+          #calendarpanel
+            .chartpanel
+
+          %div(style='clear:both')
+          #histpanel
+            .chartpanel
+
+          %div(style='clear:both')
+          #jumbopiepanel
+            .well
+              .chartpanel
+
+          %div(style='clear:both')
+          #bigpiepanel
+            .well
+              .chartpanel
+
+          %div(style='clear:both')
+          #mediumpiepanel
+            .well
+              .chartpanel
+
+          %div(style='clear:both')
+          #smallpiepanel
+            .well
+              .chartpanel
+
+          %div(style='clear:both')
+          #wcpanel
+            .chartpanel
+
+          %div(style='clear:both')
+
+  %script
+    :plain
+      Polymer('helpouts-graph', {
+        data: [],
+        dashboard: {},
+        winW: 630,
+        winH: 460,
+
+        toggleDrawer: function() {
+          this.$.drawerPanel.togglePanel();
+        },
+        dataChanged: function() {
+          this.$.storage.save();
+        },
+        reset: function() {
+          this.$.toast.show();
+        },
+
+        ready: function() {
+          //this.$.newNoteInput.style.display = 'none';
+          console.log('here');
+          if (document.body && document.body.offsetWidth) {
+            winW = document.body.offsetWidth;
+            winH = document.body.offsetHeight;
+          }
+          if (document.compatMode=='CSS1Compat' && document.documentElement && document.documentElement.offsetWidth ) {
+            winW = document.documentElement.offsetWidth;
+            winH = document.documentElement.offsetHeight;
+          }
+          if (window.innerWidth && window.innerHeight) {
+            winW = window.innerWidth;
+            winH = window.innerHeight;
+          }
+
+          readconfig(init)
+        }
+
+      });
+
+      function readconfig(next) {
+        $.ajax({
+          url: "/st/config.json",
+          dataType: "json"
+        })
+          .success(function (data) {
+            dashboard.config = data;
+            if (next) {
+              next();
+            }
+          })
+          .fail(function (err) {
+            console.log("error loading config.json");
+            console.log(err)
+            alert('could not load graph configuration, please contact Ian');
+          })
+      };
+
+      function init() {
+        dashboard.campaign_urn = oh.utils.state()[0];
+        raw_data = $('#raw_csv_data').text();
+        parsed_csv = oh.utils.parsecsv(raw_data);
+        loaddata(parsed_csv);
+        if (hasdata()) {
+          console.log('has data');
+          initcharts();
+          loadgui();
+        } else {
+          console.log('no data??');
+        }
+      };
+
+      function loaddata(records) {
+        dashboard.data = crossfilter(records);
+        dashboard.dim = {
+          main: dashboard.data.dimension(
+            oh.utils.get(
+              dashboard.config["item_main"]))
+        };
+        dashboard.groups = {
+          all: dashboard.data.groupAll()
+        }
+      };
+
+      function hasdata() {
+        if (dashboard.groups.all.value() == 0) {
+          alert("Campaign '" + dashboard.campaign_urn + '" has no responses! Try again later (or press F5)');
+          return false
+        }
+        return true
+      };
+
+      function loadgui() {
+        $(".hoverinfo").css({
+          left: ($(window).width() - $(".hoverinfo").width()) / 2,
+          right: ""
+        });
+        console.log('render start');
+        dc.renderAll();
+        console.log('render done');
+        //$("head title").text(dashboard.config.title);
+        if (oh.utils.state()[1]) {
+          console.log(202);
+          var myhash = +oh.utils.state()[1];
+          var alldata = dashboard.dim.main.top(9999);
+          var allhashes = $.map(alldata, function (d) {
+            return d.hash
+          });
+          var i = $.inArray(myhash, allhashes);
+          if (i > -1) {
+            dashboard.modal.showmodal(alldata[i])
+          } else {
+            oh.utils.state(oh.utils.state()[0])
+          }
+        }
+      };
+
+      function initcharts() {
+        dashboard.renderlet = function () {
+          var funstack = [];
+
+          function call() {
+            $.each(funstack, function (index, value) {
+              value()
+            })
+          }
+
+          function register(newfun, delay) {
+            if (!delay) {
+              funstack.push(newfun)
+            } else {
+              funstack.push(_.debounce(newfun, delay))
+            }
+          }
+
+          var init = _.once(function (renderlet) {
+            renderlet(call);
+          });
+          return {
+            init: init,
+            register: register
+          }
+        }();
+        dc.constants.EVENT_DELAY = 5;
+        dashboard.charts = dashboard.charts || {};
+        $(dashboard.config.datecharts)
+          .each(function (index, conf) {
+            $("#calendarpanel").datechart(conf)
+          });
+        $(dashboard.config.hourcharts)
+          .each(function (index, conf) {
+            $("#calendarpanel").hourchart(conf)
+          });
+        $(dashboard.config.smallpiecharts)
+          .each(function (index, conf) {
+            $("#smallpiepanel").smallpiechart(conf)
+          });
+        $(dashboard.config.mediumpiecharts)
+          .each(function (index, conf) {
+            $("#mediumpiepanel").mediumpiechart(conf)
+          });
+        $(dashboard.config.bigpiecharts)
+          .each(function (index, conf) {
+            $("#bigpiepanel").bigpiechart(conf)
+          });
+        $(dashboard.config.jumbopiecharts)
+          .each(function (index, conf) {
+            $("#jumbopiepanel").jumbopiechart(conf)
+          });
+        $(dashboard.config.barcharts)
+          .each(function (index, conf) {
+            $("#histpanel").barchart(conf)
+          });
+        $(dashboard.config.wordclouds)
+          .each(function (index, conf) {
+            $("#wcpanel").wordcloud(conf)
+          });
+        $("#infodiv").filtercount();
+
+        $("#calendarpanel").show();
+        $("#jumbopiepanel").show();
+        $("#bigpiepanel").show();
+        $("#mediumpiepanel").show();
+        $("#smallpiepanel").show();
+        $("#histpanel").show();
+        $("#wcpanel").show();
+      };
+
+  %script(src='/st/js/charts.js')

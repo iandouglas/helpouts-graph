@@ -1,0 +1,319 @@
+<link href='/st/bower_components/polymer/polymer.html' rel='import'>
+<link href='/st/bower_components/font-roboto/roboto.html' rel='import'>
+<link href='/st/bower_components/core-drawer-panel/core-drawer-panel.html' rel='import'>
+<link href='/st/bower_components/core-header-panel/core-header-panel.html' rel='import'>
+<link href='/st/bower_components/core-toolbar/core-toolbar.html' rel='import'>
+<link href='/st/bower_components/core-icons/core-icons.html' rel='import'>
+<link href='/st/bower_components/paper-icon-button/paper-icon-button.html' rel='import'>
+<link href='/st/bower_components/paper-fab/paper-fab.html' rel='import'>
+<link href='/st/bower_components/paper-input/paper-input.html' rel='import'>
+<link href='/st/bower_components/paper-checkbox/paper-checkbox.html' rel='import'>
+<link href='/st/bower_components/core-localstorage/core-localstorage.html' rel='import'>
+<link href='/st/bower_components/core-item/core-item.html' rel='import'>
+<link href='/st/bower_components/paper-toggle-button/paper-toggle-button.html' rel='import'>
+<link href='/st/bower_components/paper-icon-button/paper-icon-button.html' rel='import'>
+<link href='/st/bower_components/paper-slider/paper-slider.html' rel='import'>
+<link href='/st/bower_components/paper-toast/paper-toast.html' rel='import'>
+<link href='/st/bower_components/paper-shadow/paper-shadow.html' rel='import'>
+<link href='/st/bower_components/paper-ripple/paper-ripple.html' rel='import'>
+<script src='//code.jquery.com/jquery-1.11.1.min.js'></script>
+<script src='//code.jquery.com/ui/1.11.0/jquery-ui.min.js'></script>
+<script src='/st/js/underscore-min.js'></script>
+<script src='/st/js/mustache.js'></script>
+<script src='/st/js/murmurhash3_gc.js'></script>
+<script src='//d3js.org/d3.v3.min.js'></script>
+<script src='//dc-js.github.io/dc.js/js/dc.js'></script>
+<link href='//cdnjs.cloudflare.com/ajax/libs/dc/1.7.0/dc.css' rel='stylesheet' type='text/css'>
+<script src='//cdnjs.cloudflare.com/ajax/libs/crossfilter/1.3.7/crossfilter.min.js'></script>
+<script src='/st/js/d3.layout.cloud.js'></script>
+<link href='/st/css/charts.css' rel='stylesheet' type='text/css'>
+<polymer-element name='helpouts-graph'>
+  <template>
+    <link href='/st/css/styles.css' rel='stylesheet'>
+    <core-drawer-panel id='drawerPanel' narrow='{{narrow}}' responsiveWidth='600px'>
+      <core-header-panel drawer mode='waterfall'>
+        <core-toolbar class='tokenList'>
+          Menu
+        </core-toolbar>
+        <ul>
+          <li>
+            <a href='/'>Upload again</a>
+          </li>
+          <li>
+            Graph Choices:
+            <ul>
+              <li>
+                <a href='/graph'>All sessions</a>
+              </li>
+              <li>
+                <a href='/graph/SUCCESSFUL'>Successful sessions</a>
+              </li>
+              <li>
+                <a href='/graph/UNSUCCESSFUL'>Unsuccessful sessions</a>
+              </li>
+              <li>
+                <a href='/graph/CANCELLED'>Cancelled sessions</a>
+              </li>
+              <li>
+                <a href='/graph/FUTURE'>Upcoming sessions</a>
+              </li>
+            </ul>
+          </li>
+          <li>
+            Your provider report will be cached in memory for about ten minutes. Every time you refresh
+            this page, it will renew the cache for an additional ten minutes.
+          </li>
+          <li>
+            <strong>Your report is not stored in any permanent form!</strong>
+          </li>
+          <li>
+            If you see an error saying 'your session may have ended' then you will need to upload
+            your provider report again. I don't apologize for this inconvenience, I have no need or
+            interest to store your data for anything.
+          </li>
+          <li>
+            Contact Ian:
+            <a href='//plus.google.com/+IanDouglas'>Google+</a>
+          </li>
+        </ul>
+        <core-item>
+          <paper-button class='colored' label='reset' on-click='{{reset}}' raisedButton></paper-button>
+        </core-item>
+        <paper-toast class='capsule' duration='800' id='toast' text='Settings are reset!'></paper-toast>
+      </core-header-panel>
+      <core-header-panel main mode='waterfall'>
+        <core-toolbar class='tokenList'>
+          <paper-icon-button icon='menu' on-click='{{toggleDrawer}}'></paper-icon-button>
+          <span flex>HELPOUTS GRAPHS</span>
+        </core-toolbar>
+        <div class='content' data-fade-selected='{{fadeSelected}}'>
+          <div id='infodiv'></div>
+          <div style='clear:both'></div>
+          <div id='calendarpanel'>
+            <div class='chartpanel'></div>
+          </div>
+          <div style='clear:both'></div>
+          <div id='histpanel'>
+            <div class='chartpanel'></div>
+          </div>
+          <div style='clear:both'></div>
+          <div id='jumbopiepanel'>
+            <div class='well'>
+              <div class='chartpanel'></div>
+            </div>
+          </div>
+          <div style='clear:both'></div>
+          <div id='bigpiepanel'>
+            <div class='well'>
+              <div class='chartpanel'></div>
+            </div>
+          </div>
+          <div style='clear:both'></div>
+          <div id='mediumpiepanel'>
+            <div class='well'>
+              <div class='chartpanel'></div>
+            </div>
+          </div>
+          <div style='clear:both'></div>
+          <div id='smallpiepanel'>
+            <div class='well'>
+              <div class='chartpanel'></div>
+            </div>
+          </div>
+          <div style='clear:both'></div>
+          <div id='wcpanel'>
+            <div class='chartpanel'></div>
+          </div>
+          <div style='clear:both'></div>
+        </div>
+      </core-header-panel>
+    </core-drawer-panel>
+  </template>
+  <script>
+    Polymer('helpouts-graph', {
+      data: [],
+      dashboard: {},
+      winW: 630,
+      winH: 460,
+    
+      toggleDrawer: function() {
+        this.$.drawerPanel.togglePanel();
+      },
+      dataChanged: function() {
+        this.$.storage.save();
+      },
+      reset: function() {
+        this.$.toast.show();
+      },
+    
+      ready: function() {
+        //this.$.newNoteInput.style.display = 'none';
+        console.log('here');
+        if (document.body && document.body.offsetWidth) {
+          winW = document.body.offsetWidth;
+          winH = document.body.offsetHeight;
+        }
+        if (document.compatMode=='CSS1Compat' && document.documentElement && document.documentElement.offsetWidth ) {
+          winW = document.documentElement.offsetWidth;
+          winH = document.documentElement.offsetHeight;
+        }
+        if (window.innerWidth && window.innerHeight) {
+          winW = window.innerWidth;
+          winH = window.innerHeight;
+        }
+    
+        readconfig(init)
+      }
+    
+    });
+    
+    function readconfig(next) {
+      $.ajax({
+        url: "/st/config.json",
+        dataType: "json"
+      })
+        .success(function (data) {
+          dashboard.config = data;
+          if (next) {
+            next();
+          }
+        })
+        .fail(function (err) {
+          console.log("error loading config.json");
+          console.log(err)
+          alert('could not load graph configuration, please contact Ian');
+        })
+    };
+    
+    function init() {
+      dashboard.campaign_urn = oh.utils.state()[0];
+      raw_data = $('#raw_csv_data').text();
+      parsed_csv = oh.utils.parsecsv(raw_data);
+      loaddata(parsed_csv);
+      if (hasdata()) {
+        console.log('has data');
+        initcharts();
+        loadgui();
+      } else {
+        console.log('no data??');
+      }
+    };
+    
+    function loaddata(records) {
+      dashboard.data = crossfilter(records);
+      dashboard.dim = {
+        main: dashboard.data.dimension(
+          oh.utils.get(
+            dashboard.config["item_main"]))
+      };
+      dashboard.groups = {
+        all: dashboard.data.groupAll()
+      }
+    };
+    
+    function hasdata() {
+      if (dashboard.groups.all.value() == 0) {
+        alert("Campaign '" + dashboard.campaign_urn + '" has no responses! Try again later (or press F5)');
+        return false
+      }
+      return true
+    };
+    
+    function loadgui() {
+      $(".hoverinfo").css({
+        left: ($(window).width() - $(".hoverinfo").width()) / 2,
+        right: ""
+      });
+      console.log('render start');
+      dc.renderAll();
+      console.log('render done');
+      //$("head title").text(dashboard.config.title);
+      if (oh.utils.state()[1]) {
+        console.log(202);
+        var myhash = +oh.utils.state()[1];
+        var alldata = dashboard.dim.main.top(9999);
+        var allhashes = $.map(alldata, function (d) {
+          return d.hash
+        });
+        var i = $.inArray(myhash, allhashes);
+        if (i > -1) {
+          dashboard.modal.showmodal(alldata[i])
+        } else {
+          oh.utils.state(oh.utils.state()[0])
+        }
+      }
+    };
+    
+    function initcharts() {
+      dashboard.renderlet = function () {
+        var funstack = [];
+    
+        function call() {
+          $.each(funstack, function (index, value) {
+            value()
+          })
+        }
+    
+        function register(newfun, delay) {
+          if (!delay) {
+            funstack.push(newfun)
+          } else {
+            funstack.push(_.debounce(newfun, delay))
+          }
+        }
+    
+        var init = _.once(function (renderlet) {
+          renderlet(call);
+        });
+        return {
+          init: init,
+          register: register
+        }
+      }();
+      dc.constants.EVENT_DELAY = 5;
+      dashboard.charts = dashboard.charts || {};
+      $(dashboard.config.datecharts)
+        .each(function (index, conf) {
+          $("#calendarpanel").datechart(conf)
+        });
+      $(dashboard.config.hourcharts)
+        .each(function (index, conf) {
+          $("#calendarpanel").hourchart(conf)
+        });
+      $(dashboard.config.smallpiecharts)
+        .each(function (index, conf) {
+          $("#smallpiepanel").smallpiechart(conf)
+        });
+      $(dashboard.config.mediumpiecharts)
+        .each(function (index, conf) {
+          $("#mediumpiepanel").mediumpiechart(conf)
+        });
+      $(dashboard.config.bigpiecharts)
+        .each(function (index, conf) {
+          $("#bigpiepanel").bigpiechart(conf)
+        });
+      $(dashboard.config.jumbopiecharts)
+        .each(function (index, conf) {
+          $("#jumbopiepanel").jumbopiechart(conf)
+        });
+      $(dashboard.config.barcharts)
+        .each(function (index, conf) {
+          $("#histpanel").barchart(conf)
+        });
+      $(dashboard.config.wordclouds)
+        .each(function (index, conf) {
+          $("#wcpanel").wordcloud(conf)
+        });
+      $("#infodiv").filtercount();
+    
+      $("#calendarpanel").show();
+      $("#jumbopiepanel").show();
+      $("#bigpiepanel").show();
+      $("#mediumpiepanel").show();
+      $("#smallpiepanel").show();
+      $("#histpanel").show();
+      $("#wcpanel").show();
+    };
+  </script>
+  <script src='/st/js/charts.js'></script>
+</polymer-element>

@@ -1,77 +1,17 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Your Helpouts Graph</title>
-    <script src='//code.jquery.com/jquery-1.11.1.min.js'></script>
-    <script src='//code.jquery.com/ui/1.11.0/jquery-ui.min.js'></script>
-    <script src='/st/js/underscore-min.js'></script>
-    <script src='/st/js/mustache.js'></script>
-    <script src='/st/js/murmurhash3_gc.js'></script>
-    <script src='//d3js.org/d3.v3.min.js'></script>
-    <script src='//dc-js.github.io/dc.js/js/dc.js'></script>
-    <link href='//cdnjs.cloudflare.com/ajax/libs/dc/1.7.0/dc.css' rel='stylesheet' type='text/css'>
-    <script src='//cdnjs.cloudflare.com/ajax/libs/crossfilter/1.3.7/crossfilter.min.js'></script>
-    <script src='/st/js/d3.layout.cloud.js'></script>
-    {% if not error %}
-    {% if csv_len > 1 %}
-    <script src='/st/js/charts.js'></script>
-    {% endif %}
-    {% endif %}
-    <link href='/st/css/charts.css' rel='stylesheet' type='text/css'>
+    <title>Helpouts Graph - Visualize your Provider data</title>
+    <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0' name='viewport'>
+    <meta content='yes' name='mobile-web-app-capable'>
+    <meta content='yes' name='apple-mobile-web-app-capable'>
+    <link href='/st/css/styles.css' rel='stylesheet'>
+    <script src='/st/bower_components/platform/platform.js'></script>
+    <link href='/st/bower_components/core-header-panel/core-header-panel.html' rel='import'>
+    <link href='/st/helpouts-graph.html' rel='import'>
   </head>
-  <body>
-    <p>
-      Your provider report will be cached in memory for about ten minutes. Every time you refresh
-      this page, it will renew the cache for an additional ten minutes.
-      <strong>Your report is not stored in any permanent form!</strong>
-      If you see an error saying 'your session may have ended' then you will need to upload
-      your provider report again. I don't apologize for this inconvenience, I have no need or
-      interest to store your data for anything.
-    </p>
-    <p>
-      <a href='/'>Upload again</a>
-      <a href='/graph'>Graph all sessions</a>
-      <a href='/graph/SUCCESSFUL'>Graph only Successful sessions</a>
-      <a href='/graph/UNSUCCESSFUL'>Graph only Unsuccessful sessions</a>
-      <a href='/graph/CANCELLED'>Graph only Cancelled sessions</a>
-      <a href='/graph/FUTURE'>Graph only upcoming Scheduled sessions</a>
-    </p>
-    <hr>
-    {% if error %}
-    <p>
-      Error: {{error|safe}}
-    </p>
-    {% else %}
-    {% if csv_len < 2 %}
-    <p>
-      No data to graph, sorry.
-    </p>
-    {% endif %}
-    {% if csv_len < 1 %}
-    <p>
-      Your session might have ended. We only store your data for 10 minutes. Please try to
-      <a href='/'>upload your data again.</a>
-    </p>
-    {% endif %}
-    <div id='infobox'>
-      <div id='infodiv'></div>
-    </div>
-    <div style='clear:both'></div>
-    <div class='chartpanel' id='calendarpanel'></div>
-    <div style='clear:both'></div>
-    <div class='chartpanel' id='histpanel'></div>
-    <div style='clear:both'></div>
-    <div class='well chartpanel' id='jumbopiepanel'></div>
-    <div style='clear:both'></div>
-    <div class='well chartpanel' id='bigpiepanel'></div>
-    <div style='clear:both'></div>
-    <div class='well chartpanel' id='mediumpiepanel'></div>
-    <div style='clear:both'></div>
-    <div class='well chartpanel' id='smallpiepanel'></div>
-    <div style='clear:both'></div>
-    <div class='chartpanel' id='wcpanel'></div>
-    <div style='clear:both'></div>
-    <textarea id='raw_csv_data' style='display:none'>{{raw_csv_data|safe}}</textarea>
-    {% endif %}
+  <body unresolved>
+    <helpouts-graph></helpouts-graph>
+    <textarea id='raw_csv_data' style='display:none'>{{raw_csv_data}}</textarea>
   </body>
 </html>

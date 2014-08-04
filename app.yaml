@@ -28,6 +28,8 @@ handlers:
 
 - url: /st
   static_dir: application/static
+- url: /st/bower_components
+  static_dir: application/static/bower_components
 - url: /st/css
   static_dir: application/static/css
 - url: /st/js
