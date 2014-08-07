@@ -77,16 +77,21 @@
           </li>
         </ul>
         <core-item>
+          <paper-button class='colored' label='graphs' on-click='{{show_graphs}}' raisedButton></paper-button>
+        </core-item>
+        <core-item>
           <paper-button class='colored' label='reset' on-click='{{reset}}' raisedButton></paper-button>
         </core-item>
         <paper-toast class='capsule' duration='800' id='toast' text='Settings are reset!'></paper-toast>
       </core-header-panel>
       <core-header-panel main mode='waterfall'>
         <core-toolbar class='tokenList'>
-          <paper-icon-button icon='menu' on-click='{{toggleDrawer}}'></paper-icon-button>
           <span flex>HELPOUTS GRAPHS</span>
         </core-toolbar>
-        <div class='content' data-fade-selected='{{fadeSelected}}'>
+        <div class='content'>
+          upload message here
+        </div>
+        <div class='content-graphs'>
           <div id='infodiv'></div>
           <div style='clear:both'></div>
           <div id='calendarpanel'>
@@ -136,14 +141,17 @@
       winW: 630,
       winH: 460,
     
-      toggleDrawer: function() {
-        this.$.drawerPanel.togglePanel();
-      },
       dataChanged: function() {
         this.$.storage.save();
       },
       reset: function() {
         this.$.toast.show();
+        this.$.content.show();
+        this.$.content-graphs.hide();
+      },
+      show_graphs: function() {
+        this.$.content.hide();
+        this.$.content-graphs.show();
       },
     
       ready: function() {

@@ -68,15 +68,19 @@
             Contact Ian:
             %a(href="//plus.google.com/+IanDouglas") Google+
         %core-item
+          %paper-button(raisedButton class="colored" label="graphs" on-click="{{show_graphs}}")
+        %core-item
           %paper-button(raisedButton class="colored" label="reset" on-click="{{reset}}")
         %paper-toast(id="toast" class="capsule" text="Settings are reset!" duration="800")
 
       %core-header-panel(main mode="waterfall")
         %core-toolbar.tokenList
-          %paper-icon-button(icon="menu" on-click="{{toggleDrawer}}")
           %span(flex)HELPOUTS GRAPHS
 
-        .content(data-fade-selected="{{fadeSelected}}")
+        .content
+          upload message here
+
+        .content-graphs
           #infobox#infodiv
 
           %div(style='clear:both')
@@ -121,14 +125,17 @@
         winW: 630,
         winH: 460,
 
-        toggleDrawer: function() {
-          this.$.drawerPanel.togglePanel();
-        },
         dataChanged: function() {
           this.$.storage.save();
         },
         reset: function() {
           this.$.toast.show();
+          this.$.content.show();
+          this.$.content-graphs.hide();
+        },
+        show_graphs: function() {
+          this.$.content.hide();
+          this.$.content-graphs.show();
         },
 
         ready: function() {
