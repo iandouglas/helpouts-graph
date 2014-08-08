@@ -926,7 +926,7 @@ oh.keepactive = _.once(function (t) {
     return chartdiv
   };
   wordmap = function () {
-    var stopWords = /^(not_displayed|it|the|is|are|was|has|had|do|does|did|a|on|what|in|his|her|for|and|of|I'm|I|that|me|to|as|He|She|him|her|how|my|this|who|when)$/i;
+    var stopWords = /^(not_displayed|it|the|is|are|was|has|had|do|does|did|a|on|what|in|his|her|for|and|of|I'm|I|that|me|to|as|He|She|him|her|how|my|this|who|when|be|an|we|it's|all|any|not|you|so|he's|she's|with|able|from|will|get|by|but|if|at)$/i;
     var punctuation = /[!"&()*+,-\.\/:;<=>?\[\\\]^`\{|\}~]+/g;
     var wordSeparators = /[\s\u3031-\u3035\u309b\u309c\u30a0\u30fc\uff70]+/g;
     var discard = /^(@|https?:)/;
