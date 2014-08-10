@@ -3,13 +3,13 @@
   "item_main": "Offer Title",
   "datecharts": [
     {
-      "title": "Session Dates (PST)",
+      "title": "Session Dates and Session Count(PST)",
       "item": "Session Start (PST)"
     }
   ],
   "hourcharts": [
     {
-      "title": "Session Times (PST)",
+      "title": "Session Times (24-hour clock, PST)",
       "item": "Session Start (PST)"
     }
   ],

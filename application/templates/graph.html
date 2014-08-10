@@ -18,60 +18,82 @@
     {% endif %}
     {% endif %}
     <link href='/st/css/charts.css' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Abel' rel='stylesheet' type='text/css'>
+    <link href='/st/css/styles.css' rel='stylesheet' type='text/css'>
   </head>
   <body>
-    <p>
-      Your provider report will be cached in memory for about ten minutes. Every time you refresh
-      this page, it will renew the cache for an additional ten minutes.
-      <strong>Your report is not stored in any permanent form!</strong>
-      If you see an error saying 'your session may have ended' then you will need to upload
-      your provider report again. I don't apologize for this inconvenience, I have no need or
-      interest to store your data for anything.
-    </p>
-    <p>
-      <a href='/'>Upload again</a>
-      <a href='/graph'>Graph all sessions</a>
-      <a href='/graph/SUCCESSFUL'>Graph only Successful sessions</a>
-      <a href='/graph/UNSUCCESSFUL'>Graph only Unsuccessful sessions</a>
-      <a href='/graph/CANCELLED'>Graph only Cancelled sessions</a>
-      <a href='/graph/FUTURE'>Graph only upcoming Scheduled sessions</a>
-    </p>
-    <hr>
-    {% if error %}
-    <p>
-      Error: {{error|safe}}
-    </p>
-    {% else %}
-    {% if csv_len < 2 %}
-    <p>
-      No data to graph, sorry.
-    </p>
-    {% endif %}
-    {% if csv_len < 1 %}
-    <p>
-      Your session might have ended. We only store your data for 10 minutes. Please try to
-      <a href='/'>upload your data again.</a>
-    </p>
-    {% endif %}
-    <div id='infobox'>
-      <div id='infodiv'></div>
+    <div class='header'>
+      <h1>Helpouts Graph</h1>
+      <h4>Visualize your Google Helpouts sessions</h4>
     </div>
-    <div style='clear:both'></div>
-    <div class='chartpanel' id='calendarpanel'></div>
-    <div style='clear:both'></div>
-    <div class='chartpanel' id='histpanel'></div>
-    <div style='clear:both'></div>
-    <div class='well chartpanel' id='jumbopiepanel'></div>
-    <div style='clear:both'></div>
-    <div class='well chartpanel' id='bigpiepanel'></div>
-    <div style='clear:both'></div>
-    <div class='well chartpanel' id='mediumpiepanel'></div>
-    <div style='clear:both'></div>
-    <div class='well chartpanel' id='smallpiepanel'></div>
-    <div style='clear:both'></div>
-    <div class='chartpanel' id='wcpanel'></div>
-    <div style='clear:both'></div>
-    <textarea id='raw_csv_data' style='display:none'>{{raw_csv_data|safe}}</textarea>
-    {% endif %}
+    <div class='submenu'>
+      <ul>
+        <li>
+          Need help?
+          <a href='https://plus.google.com/+IanDouglas'>Contact author on Google+</a>
+        </li>
+        <li style='width:50px;'>&nbsp;</li>
+        <li>
+          This project is
+          <a href='https://github.com/iandouglas/helpouts-graph'>Open Source</a>
+          but not affiliated with Google in any way.
+        </li>
+      </ul>
+    </div>
+    <div class='body-content'>
+      <p>
+        Your provider report will be cached in memory for about ten minutes. Every time you refresh
+        this page, it will renew the cache for an additional ten minutes.
+        <strong>Your report is not stored in any permanent form!</strong>
+        If you see an error saying 'your session may have ended' then you will need to upload
+        your provider report again. I don't apologize for this inconvenience, I have no need or
+        interest to store your data for anything.
+      </p>
+      <ul>
+        <li>
+          <a href='/'>Upload a new Provider Report</a>
+        </li>
+        <li>
+          <a href='/graph'>Re-draw all graphs</a>
+        </li>
+      </ul>
+      <hr>
+      {% if error %}
+      <p>
+        Error: {{error|safe}}
+      </p>
+      {% else %}
+      {% if csv_len < 2 %}
+      <p>
+        No data to graph, sorry.
+      </p>
+      {% endif %}
+      {% if csv_len < 1 %}
+      <p>
+        Your session might have ended. We only store your data for 10 minutes. Please try to
+        <a href='/'>upload your data again.</a>
+      </p>
+      {% endif %}
+      <div id='infobox'>
+        <div id='infodiv'></div>
+      </div>
+      <div style='clear:both'></div>
+      <div class='chartpanel' id='calendarpanel'></div>
+      <div style='clear:both'></div>
+      <div class='chartpanel' id='histpanel'></div>
+      <div style='clear:both'></div>
+      <div class='well chartpanel' id='jumbopiepanel'></div>
+      <div style='clear:both'></div>
+      <div class='well chartpanel' id='bigpiepanel'></div>
+      <div style='clear:both'></div>
+      <div class='well chartpanel' id='mediumpiepanel'></div>
+      <div style='clear:both'></div>
+      <div class='well chartpanel' id='smallpiepanel'></div>
+      <div style='clear:both'></div>
+      <div class='chartpanel' id='wcpanel'></div>
+      <div style='clear:both'></div>
+      <textarea id='raw_csv_data' style='display:none'>{{raw_csv_data|safe}}</textarea>
+      {% endif %}
+    </div>
   </body>
 </html>

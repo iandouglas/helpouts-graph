@@ -1,17 +1,34 @@
 !!!
 %html
   %head
+    %link(href='http://fonts.googleapis.com/css?family=Abel' rel='stylesheet' type='text/css')
+    %link(href='/st/css/styles.css' rel='stylesheet' type='text/css')
   %body
-    %p
-      Step 1: Download your
-      %a(href='http://helpouts.google.com/api/providerreport') Provider Report
-      in CSV format. You will need to be logged in on the same Google account
-      that you use for providing Helpouts sessions.
+    .header
+      %h1 Helpouts Graph
+      %h4 Visualize your Google Helpouts sessions
+    .submenu
+      %ul
+        %li
+          Need help?
+          %a(href='https://plus.google.com/+IanDouglas') Contact author on Google+
+        %li(style='width:50px;') &nbsp;
+        %li
+          This project is
+          %a(href='https://github.com/iandouglas/helpouts-graph') Open Source
+          but not affiliated with Google in any way.
+    .body-content
+      %p
+        Step 1: Download your
+        %a(href='http://helpouts.google.com/api/providerreport') Provider Report
+        in CSV format. You will need to be logged in on the same Google account
+        that you use for providing Helpouts sessions.
 
-    %p
-      Step 2: Upload your provider report here. Click on 'Choose file' and select
-      your provider report (check your Downloads folder), then click the 'upload'
-      button:
-      %form(method='post' action='/graph' enctype='multipart/form-data')
-        %input(type='file' name='csv_upload' id='csv_upload')
-        %input(type='submit' value='upload')
+      %p
+        Step 2: Upload your provider report here. Click on 'Choose file' and select
+        your provider report (check your Downloads folder), then click the 'upload'
+        button:
+        %form(method='post' action='/graph' enctype='multipart/form-data')
+          %input.upload(type='file' name='csv_upload' id='csv_upload')
+          %p
+            %button.button(type='submit') upload

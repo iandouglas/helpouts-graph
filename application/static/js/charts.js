@@ -339,6 +339,8 @@ oh.keepactive = _.once(function (t) {
     oh.ping()
   })
 });
+
+
 (function ($) {
   $.fn.smallpiechart = function (options) {
     var target = this;
@@ -385,6 +387,8 @@ oh.keepactive = _.once(function (t) {
     }
   }
 })(jQuery); // small pie chart
+
+
 (function ($) {
   $.fn.mediumpiechart = function (options) {
     var target = this;
@@ -431,6 +435,8 @@ oh.keepactive = _.once(function (t) {
     }
   }
 })(jQuery); // medium pie chart
+
+
 (function ($) {
   $.fn.bigpiechart = function (options) {
     var target = this;
@@ -477,6 +483,8 @@ oh.keepactive = _.once(function (t) {
     }
   }
 })(jQuery); // big pie chart
+
+
 (function ($) {
   $.fn.jumbopiechart = function (options) {
     var target = this;
@@ -524,6 +532,8 @@ oh.keepactive = _.once(function (t) {
     }
   }
 })(jQuery); // jumbo pie chart
+
+
 (function ($) {
   $.fn.barchart = function (options) {
     var target = this;
@@ -676,7 +686,7 @@ oh.keepactive = _.once(function (t) {
       var remainder = (winW - 30) % Math.floor(ndays / 2)
     }
     var mychart = dc.barChart("#" + mydiv.attr("id"))
-      .width(winW)
+      .width(winW * 0.8)
       .height(150)
       .transitionDuration(200)
       .margins({

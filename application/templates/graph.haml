@@ -21,54 +21,70 @@
     {% endif %}
     %link(rel='stylesheet' type='text/css' href='/st/css/charts.css')
 
+    %link(href='http://fonts.googleapis.com/css?family=Abel' rel='stylesheet' type='text/css')
+    %link(href='/st/css/styles.css' rel='stylesheet' type='text/css')
+
   %body
-    %p
-      Your provider report will be cached in memory for about ten minutes. Every time you refresh
-      this page, it will renew the cache for an additional ten minutes.
-      %strong Your report is not stored in any permanent form!
-      If you see an error saying 'your session may have ended' then you will need to upload
-      your provider report again. I don't apologize for this inconvenience, I have no need or
-      interest to store your data for anything.
-    %p
-      %a(href='/') Upload again
-      %a(href='/graph') Graph all sessions
-      %a(href='/graph/SUCCESSFUL') Graph only Successful sessions
-      %a(href='/graph/UNSUCCESSFUL') Graph only Unsuccessful sessions
-      %a(href='/graph/CANCELLED') Graph only Cancelled sessions
-      %a(href='/graph/FUTURE') Graph only upcoming Scheduled sessions
-    %hr
-    {% if error %}
-    %p
-      Error: {{error|safe}}
-    {% else %}
+    .header
+      %h1 Helpouts Graph
+      %h4 Visualize your Google Helpouts sessions
+    .submenu
+      %ul
+        %li
+          Need help?
+          %a(href='https://plus.google.com/+IanDouglas') Contact author on Google+
+        %li(style='width:50px;') &nbsp;
+        %li
+          This project is
+          %a(href='https://github.com/iandouglas/helpouts-graph') Open Source
+          but not affiliated with Google in any way.
+    .body-content
 
-    {% if csv_len < 2 %}
-    %p
-      No data to graph, sorry.
-    {% endif %}
-    {% if csv_len < 1 %}
-    %p
-      Your session might have ended. We only store your data for 10 minutes. Please try to
-      %a(href='/') upload your data again.
-    {% endif %}
+      %p
+        Your provider report will be cached in memory for about ten minutes. Every time you refresh
+        this page, it will renew the cache for an additional ten minutes.
+        %strong Your report is not stored in any permanent form!
+        If you see an error saying 'your session may have ended' then you will need to upload
+        your provider report again. I don't apologize for this inconvenience, I have no need or
+        interest to store your data for anything.
+      %ul
+        %li
+          %a(href='/') Upload a new Provider Report
+        %li
+          %a(href='/graph') Re-draw all graphs
+      %hr
+      {% if error %}
+      %p
+        Error: {{error|safe}}
+      {% else %}
 
-    #infobox
-      #infodiv
-    %div(style='clear:both')
-    #calendarpanel.chartpanel
-    %div(style='clear:both')
-    #histpanel.chartpanel
-    %div(style='clear:both')
-    #jumbopiepanel.well.chartpanel
-    %div(style='clear:both')
-    #bigpiepanel.well.chartpanel
-    %div(style='clear:both')
-    #mediumpiepanel.well.chartpanel
-    %div(style='clear:both')
-    #smallpiepanel.well.chartpanel
-    %div(style='clear:both')
-    #wcpanel.chartpanel
-    %div(style='clear:both')
-    %textarea#raw_csv_data(style='display:none')
-      {{raw_csv_data|safe}}
-    {% endif %}
+      {% if csv_len < 2 %}
+      %p
+        No data to graph, sorry.
+      {% endif %}
+      {% if csv_len < 1 %}
+      %p
+        Your session might have ended. We only store your data for 10 minutes. Please try to
+        %a(href='/') upload your data again.
+      {% endif %}
+
+      #infobox
+        #infodiv
+      %div(style='clear:both')
+      #calendarpanel.chartpanel
+      %div(style='clear:both')
+      #histpanel.chartpanel
+      %div(style='clear:both')
+      #jumbopiepanel.well.chartpanel
+      %div(style='clear:both')
+      #bigpiepanel.well.chartpanel
+      %div(style='clear:both')
+      #mediumpiepanel.well.chartpanel
+      %div(style='clear:both')
+      #smallpiepanel.well.chartpanel
+      %div(style='clear:both')
+      #wcpanel.chartpanel
+      %div(style='clear:both')
+      %textarea#raw_csv_data(style='display:none')
+        {{raw_csv_data|safe}}
+      {% endif %}
