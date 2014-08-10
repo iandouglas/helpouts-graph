@@ -5,7 +5,7 @@ View handlers for login, home and warmup
 import StringIO
 import csv
 import logging
-from flask import render_template, g, session
+from flask import render_template, session
 from flask import request
 from google.appengine.api import memcache
 import time
@@ -33,7 +33,9 @@ def graph(state=None):
         raw_csv_data = unicode(memcache.get(str(session['sid'])))
         memcache.set(str(session['sid']), raw_csv_data, 600)
         if not raw_csv_data:
-            return render_template('graph.html', error='Your session has ended, please <a href="/">upload your provider report again</a>.')
+            return render_template(
+                'graph.html',
+                error='Your session has ended, please <a href="/">upload your provider report again</a>.')
         tmp_csv = []
         rows = raw_csv_data.split("\n")
         first_row = True
