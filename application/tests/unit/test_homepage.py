@@ -1,7 +1,6 @@
 # coding=utf-8
 import os
 import unittest
-from flask import session
 import flask
 from google.appengine.api import memcache
 from google.appengine.ext import testbed
@@ -10,7 +9,7 @@ from application import create_app
 from application.routes import create_routes
 
 
-class ViewGeneralLoggedRegisteredAndVerifiedTest(unittest.TestCase):
+class HomepageTest(unittest.TestCase):
     def setUp(self):
         self.tb = testbed.Testbed()
         self.tb.activate()
@@ -46,10 +45,9 @@ class ViewGeneralLoggedRegisteredAndVerifiedTest(unittest.TestCase):
             self.client.get('/')
             flask.session['sid'] = int(time.time())
             sid = flask.session['sid']
-            fake_csv_fh = os.open(os.path.join(os.path.abspath('.'), 'integration/providerreport.csv'), os.O_RDONLY)
+            fake_csv_fh = os.open(os.path.join(os.path.abspath('.'), 'providerreport.csv'), os.O_RDONLY)
             fake_csv_data = os.read(fake_csv_fh, 50000)
             memcache.set(str(sid), fake_csv_data, 600)
             rv = self.client.get('/graph')
             self.assertEqual(rv.status, '200 OK')
-            print rv.data
             self.assertFalse('No data to graph, sorry.' in rv.data)

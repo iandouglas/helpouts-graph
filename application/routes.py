@@ -1,8 +1,6 @@
 # coding=utf-8
 from flask import render_template
-# from google.appengine.api import users, memcache, urlfetch
-#from application.models.user_settings import UserSettings
-from application.views import warmup, home, general, graph
+from application.views import warmup, home, graph
 
 
 def create_routes(app):
@@ -30,15 +28,11 @@ def create_routes(app):
         """
         # App Engine warm up handler
         # this code is what App Engine calls when starting up a new instance; we could set this up to email us whenever
-        #  a new instance is started, if we cared about that sort of thing.
+        # a new instance is started, if we cared about that sort of thing.
         # See http://code.google.com/appengine/docs/python/config/appconfig.html#Warming_Requests
         app.add_url_rule('/_ah/warmup', endpoint='warmup',
                          view_func=warmup,
                          methods=['GET'])
-
-        # app.add_url_rule('/login', endpoint='login',
-        #                  view_func=login,
-        #                  methods=['GET'])
 
         app.add_url_rule('/graph', endpoint='tos',
                          view_func=graph,
@@ -47,15 +41,11 @@ def create_routes(app):
                          view_func=graph,
                          methods=['GET', 'POST'])
 
-        # app.add_url_rule('/tos', endpoint='tos',
-        #                  view_func=general.terms_of_service,
-        #                  methods=['GET'])
-
         app.add_url_rule('/', endpoint='home',
                          view_func=home,
                          methods=['GET'])
 
-    build_routes(app)  # pragma: no cover
+    build_routes(app)
 
     ## Error handlers
     # Handle 404 errors
