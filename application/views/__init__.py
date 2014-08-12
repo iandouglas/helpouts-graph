@@ -4,7 +4,6 @@ View handlers for login, home and warmup
 """
 import StringIO
 import csv
-import logging
 from flask import render_template, session
 from flask import request
 from google.appengine.api import memcache
@@ -46,7 +45,8 @@ def csv_processor(raw_csv_data):
     :param raw_csv_data: string
     :return: list, of CSV rows, hopefully
     """
-    return csvstring2dict(raw_csv_data)
+    data = csvstring2dict(raw_csv_data)
+    return data
 
 
 def graph(state=None):
@@ -55,10 +55,11 @@ def graph(state=None):
     :param state: string
     :return: flask response
     """
-    # Iterating over a string as a file
+    if 'sid' not in session:
+        session['sid'] = int(time.time())
+
     if state:
-        logging.error(state)
-        raw_csv_data = unicode(memcache.get(str(session['sid'])))
+        raw_csv_data = unicode(memcache.get(make_cache_key(session['sid'], 'raw')))
         memcache.set(make_cache_key(session['sid'], 'raw'), raw_csv_data, 600)
         if not raw_csv_data:
             return render_template(
@@ -86,11 +87,9 @@ def graph(state=None):
                     tmp_csv.append(row)
         if len(tmp_csv):
             raw_csv_data = "\n".join(tmp_csv)
-            logging.error(raw_csv_data)
     else:
         raw_csv_data = unicode(memcache.get(make_cache_key(session['sid'], 'raw')))
         if request.files:
-            logging.error('got a file to process')
             raw_csv_data = unicode("")
             for data in request.files['csv_upload'].read():
                 raw_csv_data += data
