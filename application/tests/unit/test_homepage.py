@@ -5,6 +5,7 @@ import flask
 from google.appengine.api import memcache
 from google.appengine.ext import testbed
 import time
+from application import views
 from application import create_app
 from application.routes import create_routes
 
