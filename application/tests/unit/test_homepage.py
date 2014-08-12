@@ -52,3 +52,9 @@ class HomepageTest(unittest.TestCase):
             rv = self.client.get('/graph')
             self.assertEqual(rv.status, '200 OK')
             self.assertFalse('No data to graph, sorry.' in rv.data)
+
+    def test_google_analytics(self):
+        rv = self.client.get('/')
+        self.assertTrue('UA-142829-32' in rv.data)
+        rv = self.client.get('/graph')
+        self.assertTrue('UA-142829-32' in rv.data)
