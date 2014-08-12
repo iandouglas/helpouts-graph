@@ -93,6 +93,8 @@ def graph(state=None):
             raw_csv_data = unicode("")
             for data in request.files['csv_upload'].read():
                 raw_csv_data += data
+            if raw_csv_data == u'' or raw_csv_data is None:
+                raise ValueError
         memcache.set(make_cache_key(session['sid'], 'raw'), raw_csv_data, 600)
 
     return render_template(

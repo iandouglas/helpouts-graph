@@ -50,7 +50,7 @@ def create_routes(app):
     ## Error handlers
     # Handle 404 errors
     @app.errorhandler(404)
-    def page_not_found(e):  # pragma: no cover
+    def page_not_found(e):
         """
          handle 404 errors
         """
@@ -58,15 +58,9 @@ def create_routes(app):
 
     # Handle 500 errors
     @app.errorhandler(500)
-    def server_error(e):  # pragma: no cover
+    @app.errorhandler(Exception)
+    def server_error(e):
         """
         handle 500 crashes
         """
         return render_template('500.html'), 500
-
-    @app.before_request
-    def before_request():  # pragma: no cover
-        """
-        do this stuff before every request gets handled anywhere else
-        """
-        pass

@@ -24,7 +24,7 @@ class HomepageTest(unittest.TestCase):
         browser.visit('http://127.0.0.1:8080/')
         self.assertEqual(browser.is_text_present('You will need to be logged in on the same Google account'), True)
         browser.find_by_id('submit').click()
-        self.assertEqual(browser.is_text_present('No data to graph, sorry'), True)
+        self.assertEqual(browser.is_text_present('Ruh-roh'), True)
 
     def test_splinter_homepage_withcsv(self):
         browser.visit('http://127.0.0.1:8080/')
